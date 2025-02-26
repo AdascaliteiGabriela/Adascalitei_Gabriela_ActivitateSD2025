@@ -48,5 +48,8 @@ int main() {
 	afisare(masina1);
 	dezalocare(&masina1);
 	afisare(masina1);
+	printf("\nDimensiunea unui pointer: %d", sizeof(int*));
+	printf("\nDimensiunea unui pointer de tip Masina: %d", sizeof(struct Masina*));
+	printf("\nDimensiunea unei structuri de tip Masina: %d", sizeof(struct Masina));
 	return 0;
 }
