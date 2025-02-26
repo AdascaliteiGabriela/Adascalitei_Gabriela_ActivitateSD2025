@@ -24,7 +24,7 @@ struct Masina initializare(int id, int nrLocuri,const char* marca, float capacit
 }
 
 void afisare(struct Masina m) {
-	//afisarea tuturor atributelor.
+	printf("ID masina: %d \nNR Locuri: %d\nCapacitate:  %4.2f\nMarca: %s\nEuro%c",m.id,m.nrLocuri,m.capacitateC,m.marca,m.normaPoluare);
 }
 
 void modifica_Atribut(struct Masina m) {
@@ -38,5 +38,6 @@ void dezalocare(struct Masina* m) {
 int main() {
 	struct Masina masina1;
 	masina1 = initializare(1, 4, "Logan", 2000, '1');
+	afisare(masina1);
 	return 0;
 }
