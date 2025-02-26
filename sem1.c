@@ -33,7 +33,11 @@ void modificaNrLocuri(struct Masina* m, int numarNou) {
 }
 
 void dezalocare(struct Masina* m) {
-	//dezalocare campuri alocate dinamic
+
+	free(m->marca);
+	m->marca = NULL;
+	//(*m).marca=NULL;
+	/* NU STERGEM NOI masina1! m este in stiva lui main, deci este gestionat automat. free(m);m = NULL;*/
 }
 
 int main() {
@@ -41,6 +45,8 @@ int main() {
 	masina1 = initializare(1, 4, "Logan", 2000, '1');
 	afisare(masina1);
 	modificaNrLocuri(&masina1, 1);
+	afisare(masina1);
+	dezalocare(&masina1);
 	afisare(masina1);
 	return 0;
 }
