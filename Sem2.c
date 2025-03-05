@@ -13,16 +13,22 @@ struct Masina {
 
 struct Masina initializare(int id, int nrLocuri, const char* marca, float capacitateC, char norma) {
 	struct Masina m;
-	m.id = 1;
+	m.id = id;
 	m.capacitateC = capacitateC;
 	m.nrLocuri = nrLocuri;
-	m.marca = (char*)malloc((strlen(marca) + 1) * sizeof(char));//se aloca numarul de octeti
-	strcpy_s(m.marca, strlen(marca) + 1, marca);
+	
 	m.normaPoluare = norma;
+	if (marca == NULL)
+		m.marca = NULL;
+	else
+	{
+		m.marca = (char*)malloc((strlen(marca) + 1) * sizeof(char));//se aloca numarul de octeti
+		strcpy_s(m.marca, strlen(marca) + 1, marca);
+	}
 	return m;
 }
 	void afisare(struct Masina m) {
-		printf("ID masina: %d \nNR Locuri: %d\nCapacitate:  %4.2f\nMarca: %s\nEuro%c",m.id,m.nrLocuri,m.capacitateC,m.marca,m.normaPoluare);
+		printf("ID masina: %d \nNR Locuri: %d\nCapacitate:  %4.2f\nMarca: %s\nEuro%c\n\n",m.id,m.nrLocuri,m.capacitateC,m.marca,m.normaPoluare);
 	}
 	
 	void modificaNrLocuri(struct Masina* m, int numarNou) {
@@ -38,7 +44,14 @@ struct Masina initializare(int id, int nrLocuri, const char* marca, float capaci
 		/* NU STERGEM NOI masina1! m este in stiva lui main, deci este gestionat automat. free(m);m = NULL;*/
 	}
 
-
+	void dezalocareV(struct Masina** vector, int* nrElemente) {
+		for (int i = 0; i < *nrElemente; i++) {
+			free((*vector)[i].marca);
+		}
+		free(*vector);
+		*vector = NULL;
+		*nrElemente = 0;  // Resetare contor
+	}
 
 
 void afisareVector(struct Masina* vector, int nrElemente) {
@@ -47,31 +60,57 @@ void afisareVector(struct Masina* vector, int nrElemente) {
 }
 
 struct Masina* copiazaPrimeleNElemente(struct Masina* vector, int nrElemente, int nrElementeCopiate) {
-	//copiem intr-un vector nou pe care il vom returna primele nrElementeCopiate
+	
 	struct Masina *vectorNou=NULL;
 	vectorNou = (struct Masina*)malloc(nrElementeCopiate * sizeof(struct Masina));
+	if (nrElementeCopiate > nrElemente)
+		nrElementeCopiate = nrElemente;
+		
 	for (int i = 0; i < nrElementeCopiate; i++)
 	{
-		vectorNou[i] = initializare(vector[i].id,vector[i].marca,vector[i].nrLocuri,vector[i].capacitateC,vector[i].normaPoluare);
+		vectorNou[i] = initializare(vector[i].id, vector[i].nrLocuri, vector[i].marca, vector[i].capacitateC, vector[i].normaPoluare);
+
 	}
 	return vectorNou;
 }
 
 
 
-void copiazaAnumiteElemente(struct Masina* vector, char nrElemente, float prag, struct Masina** vectorNou, int* dimensiune) {
-	//parametrul prag poate fi modificat in functie de 
-	// tipul atributului ales pentru a indeplini o conditie
-	//este creat un nou vector cu elementele care indeplinesc acea conditie
+void copiazaMasiniCuCMare(struct Masina* vector, char nrElemente, float prag, struct Masina** vectorNou, int* dimensiune) {
+	*dimensiune = 0;
+	for (char i = 0; i < nrElemente; i++)
+	{
+		if (prag < vector[i].capacitateC)
+			(*dimensiune)++;
+
+	}
+	if (*dimensiune > 0)
+	{
+		*vectorNou = (struct Masina*)malloc((*dimensiune) * sizeof(struct Masina));
+		int j = 0;
+		for (int i = 0; i < nrElemente; i++)
+		{
+			if (prag < vector[i].capacitateC)
+			{
+				
+				(*vectorNou)[j] = vector[i];
+				(*vectorNou)[j].marca = (char*)malloc(strlen(vector[i].marca)+1);
+				strcpy_s((*vectorNou)[j].marca, strlen(vector[i].marca) + 1, vector[i].marca);
+				j++;
+			}
+		}
+	}
 }
 
-struct Masina getPrimulElementConditionat(struct Masina* vector, int nrElemente, const char* conditie) {
-	//trebuie cautat elementul care indeplineste o conditie
-	//dupa atributul de tip char*. Acesta este returnat.
-	struct Masina s;
-	s.id = 1;
+struct Masina getPrimaMasinaDupaMArca(struct Masina* vector, int nrElemente, const char* conditie) {
+	
+	for (int i = 0; i < nrElemente; i++)
+	{
+		if (strcmp(vector[i].marca, conditie) == 0)
+			return vector[i];
+	}
+	return initializare(1, 0, NULL, 0, '0');
 
-	return s;
 }
 	
 
@@ -85,5 +124,26 @@ int main() {
 	vector[2] = initializare(3, 4, "Dacia", 50, '3');
 	afisare(vector[0]);
 	afisareVector(vector,nrElemente);
+	struct Masina* vectorMasiniCopiate;
+	int nrElementeCopiate = 2;
+	printf("\n\nAfisare elemente copiate: \n");
+	vectorMasiniCopiate = copiazaPrimeleNElemente(vector, nrElemente, nrElementeCopiate);
+	afisareVector(vectorMasiniCopiate, nrElementeCopiate);
+	dezalocareV(&vectorMasiniCopiate, &nrElementeCopiate);
+	
+	
+
+	printf("\n\nAfisare masini cu capacitate cilindrica mare: \n\n");
+	copiazaMasiniCuCMare(vector, (char)nrElemente, 35, &vectorMasiniCopiate, &nrElementeCopiate);
+	afisareVector(vectorMasiniCopiate, nrElementeCopiate);
+	dezalocareV(&vectorMasiniCopiate, &nrElementeCopiate);
+
+
+	
+
+	struct Masina m1 = getPrimaMasinaDupaMArca(vector, nrElemente, "Dacia");
+	printf("Prima masina Dacia este: \n");
+	afisare(m1);
+	dezalocareV(&vector, &nrElemente);
 	return 0;
 }
