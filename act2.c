@@ -80,6 +80,17 @@ void copiazaSalVarstaPesteMin(struct Salariat* s, int nrElem, int varstaMin, str
 		}
 }
 
+struct Salariat getPrimulSalDupaNume(struct Salariat* vector, int nrEl, const char* nume) {
+	
+	for (int i = 0; i < nrEl; i++)
+	{
+		if (strcmp(vector[i].nume, nume) == 0)
+			return vector[i];
+	}
+	return initializare(1, 0, NULL, 0, '0');
+
+}
+
 int main()
 {
 	struct Salariat s1;
@@ -120,6 +131,9 @@ int main()
 
 	dezalocareV(&vector, &numarElemente);
 	//afisareVector(vector, numarElemente);
+
+	printf("\nSalariatul cu numele 'Maria' este: \n");
+	afisare(getPrimulSalDupaNume(vectNou, dim, "Maria"));
 
 	return 0;
 }
