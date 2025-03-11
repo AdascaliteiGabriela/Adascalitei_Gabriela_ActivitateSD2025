@@ -50,7 +50,16 @@ void afisareVector(struct Salariat* vector, int nrElemente) {
 		afisare(vector[i]);
 	printf("\n");
 }
-
+void dezalocareV(struct Salariat** vector, int* nrElemente)
+{
+	for (int i = 0; i < *nrElemente; i++) 
+		free((*vector)[i].nume);
+			
+	free(*vector);
+	*vector = NULL;
+	*nrElemente = 0;  
+}
+	
 
 
 int main()
@@ -83,5 +92,8 @@ int main()
 	afisareVector(vector, numarElemente);
 	dezalocare(&s1);
 	afisareVector(vector, numarElemente);
+	dezalocareV(&vector, &numarElemente);
+	//afisareVector(vector, numarElemente);
+
 	return 0;
 }
