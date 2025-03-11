@@ -61,7 +61,24 @@ void dezalocareV(struct Salariat** vector, int* nrElemente)
 	*vector = NULL;
 	*nrElemente = 0;  
 }
-//void copiazaSalariati
+void copiazaSalVarstaPesteMin(struct Salariat* s, int nrElem, int varstaMin, struct Salariat** vectNou, int* numarElemente)
+{
+	*numarElemente = 0;
+	for (int i = 0; i < nrElem; i++)
+		if (s[i].varsta > varstaMin)
+		{
+			(*numarElemente)++;
+		}
+	(*vectNou) = (struct Salariat*)malloc((*numarElemente) * sizeof(struct Salariat));
+	int j = 0;
+	for(int i=0;i<nrElem;i++)
+		if (s[i].varsta > varstaMin)
+		{
+			struct Salariat temp = initializare(s[i].id, s[i].salariu, s[i].nume, s[i].specializare, s[i].varsta);
+			(*vectNou)[j] = temp;
+			j++;
+		}
+}
 
 int main()
 {
@@ -94,6 +111,13 @@ int main()
 	afisareVector(vector, numarElemente);
 	dezalocare(&s1);
 	afisareVector(vector, numarElemente);
+	
+	struct Salariat* vectNou;
+	int dim = 0;
+	int varstaMin = 22;
+	copiazaSalVarstaPesteMin(vector, numarElemente, varstaMin, &vectNou, &dim);
+	afisareVector(vectNou, dim);
+
 	dezalocareV(&vector, &numarElemente);
 	//afisareVector(vector, numarElemente);
 
