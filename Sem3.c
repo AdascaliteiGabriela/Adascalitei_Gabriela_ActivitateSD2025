@@ -14,10 +14,10 @@ struct StructuraMasina {
 	char* numeSofer;
 	unsigned char serie;
 };
-typedef struct StructuraMasina Masina;
+typedef struct StructuraMasina Masina; //in loc sa scriu struct StructuraMasina am definit un alias Masina 
 
 void afisareMasina(Masina masina) {
-	//afiseaza toate atributele unei masini
+	printf("ID masina: %d\nNumar usi: %d \nPretul: %5.2f \nModelul: %cs \nNume sofer: %s \nSerie: %c", masina.id, masina.nrUsi, masina.pret, masina.model, masina.numeSofer, masina.serie);
 }
 
 void afisareVectorMasini(Masina* masini, int nrMasini) {
@@ -46,7 +46,8 @@ void dezalocareVectorMasini(Masina** vector, int* nrMasini) {
 	//este dezalocat intreg vectorul de masini
 }
 
-int main() {
+int main() 
+{
 
 
 	return 0;
