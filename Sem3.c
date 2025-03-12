@@ -17,12 +17,13 @@ struct StructuraMasina {
 typedef struct StructuraMasina Masina; //in loc sa scriu struct StructuraMasina am definit un alias Masina 
 
 void afisareMasina(Masina masina) {
-	printf("ID masina: %d\nNumar usi: %d \nPretul: %5.2f \nModelul: %cs \nNume sofer: %s \nSerie: %c", masina.id, masina.nrUsi, masina.pret, masina.model, masina.numeSofer, masina.serie);
+	printf("ID masina: %d\nNumar usi: %d \nPretul: %5.2f \nModelul: %cs \nNume sofer: %s \nSerie: %c\n\n", masina.id, masina.nrUsi, masina.pret, masina.model, masina.numeSofer, masina.serie);
 }
 
 void afisareVectorMasini(Masina* masini, int nrMasini) {
-	//afiseaza toate elemente de tip masina din vector
-	//prin apelarea functiei afisareMasina()
+	for (int i = 0; i < nrMasini; i++)
+		afisareMasina(masini[i]);
+
 }
 
 void adaugaMasinaInVector(Masina** masini, int* nrMasini, Masina masinaNoua) {
