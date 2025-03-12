@@ -35,7 +35,7 @@ void adaugaMasinaInVector(Masina** masini, int* nrMasini, Masina masinaNoua) {
 	copie[(*nrMasini)] = masinaNoua;
 	free((*masini));//free e o functie
 	(*masini) = copie;//am mutat pointer ul la adresa lui copie
-
+	(*nrMasini)++;
 }
 
 Masina citireMasinaFisier(FILE* file) {
@@ -63,19 +63,53 @@ Masina citireMasinaFisier(FILE* file) {
 
 }
 
-Masina* citireVectorMasiniFisier(const char* numeFisier, int* nrMasiniCitite) {
-	//functia primeste numele fisierului, il deschide si citeste toate masinile din fisier
-	//prin apelul repetat al functiei citireMasinaFisier()
-	//numarul de masini este determinat prin numarul de citiri din fisier
-	//ATENTIE - la final inchidem fisierul/stream-ul
+Masina* citireVectorMasiniFisier(const char* numeFisier, int* nrMasiniCitite) 
+{
+	FILE* f = fopen(numeFisier,"r");//parametrii:numele fisierului+modul de descriere(r pentru read)
+	(*nrMasiniCitite) = 0;
+	Masina* masini = NULL;
+	do
+	{
+		adaugaMasinaInVector(&masini, nrMasiniCitite, citireMasinaFisier(f));
+
+	} while (!feof(f));//feof() e functie
+	fclose(f);
+	return masini;
 }
 
 void dezalocareVectorMasini(Masina** vector, int* nrMasini) {
-	//este dezalocat intreg vectorul de masini
+	for (int i = 0; i < *nrMasini; i++) {
+		free((*vector)[i].model);
+		free((*vector)[i].numeSofer);
+	}
+	free(*vector);
+	*vector = NULL;
+	*nrMasini = 0;
+}
+float pretMediuDupaNrUsi(Masina* vector, int nrMasini, int nrUsi)
+{
+	float suma = 0;
+	int index = 0;
+	for (int i = 0; i < nrMasini; i++)
+	{
+		if (vector[i].nrUsi == nrUsi)
+		{
+			suma += vector[i].pret;
+			index++;
+		}
+	}
+	return suma / index;
 }
 
 int main() 
 {
 	//in masini.txt despartitorul e virgula pentru a putea citi denumiri cu spatiu
+	Masina* masini = NULL;
+	int numarMasini = 0;
+	masini=citireVectorMasiniFisier("masini.txt", &numarMasini);
+	afisareVectorMasini(masini, numarMasini);
+	float medie = pretMediuDupaNrUsi(masini, numarMasini, 5);
+	printf("Media masinilor este: %2f", medie);
+	dezalocareVectorMasini(&masini,&numarMasini);
 	return 0;
 }
