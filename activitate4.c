@@ -9,6 +9,12 @@ struct Caiet
 	char tip;//o litera care simbolizeaza daca e caiet dictando(D), matematica(M) sau cu foi albe(V)
 
 };
+struct Nod
+{
+	struct Caiet info;
+	struct Nod* urmator;//adresa la urmatorul nod pt a continua lista
+};
+typedef struct Nod Nod;
 struct Caiet initializareCaiet(int numarPagini, const char* disciplina, char tip)
 {
 	struct Caiet c;
@@ -88,6 +94,57 @@ void dezalocareVector(struct Caiet** c, int* numar)
 	(*c) = NULL;
 	(*numar) = 0;
 }
+
+
+//PARTEA CU LISTA SIMPLU INLANTUITA
+void afisareListaCaiete(Nod* cap)//ne trebuie primul nod neaparat
+{
+	while (cap != NULL)
+	{
+		afisareCaiet(cap->info);//am dereferentiat pt ca aveam adresa, dar eu vreau efectiv obiectul pentru a apela functia
+		cap = cap->urmator;//trec la nodul urmator ca sa continui cu parcurgerea listei
+	}
+
+}
+void adaugareCaietFinal(Nod** cap, struct Caiet c)//asa identific lista,iar cap e transmis prin dublu pointer ca sa putem modifica daca este cazul(daca initial e null si adaug primul element->cap de modifica)
+{
+	Nod* nou = (Nod*)malloc(sizeof(Nod));
+	nou->info = c;
+	nou->urmator = NULL;//pt ca inseram la final, deci e ultimul
+	if ((*cap))
+	{
+		//daca parcurg direct cu cap se modifica si nu ma mai pot intoarce la inceput->am pierdut elementele de dinainte de ultimul
+		//ne trebuie un nod nou
+		Nod* p = (*cap);
+		while (p->urmator != NULL)//ma deplasez pana ajung la final
+			p = p->urmator;
+		p->urmator = nou;
+	}
+	else
+		*cap = nou;
+}
+void adaugareCaietInceput(Nod** cap, struct Caiet c)
+{
+	Nod* nou = (Nod*)malloc(sizeof(Nod));
+	nou->info = c;
+	nou->urmator = (*cap);
+	(*cap) = nou;
+}
+Nod* citireListaFisier(const char* numef)//vom returna nodul cap
+{
+	Nod* cap = NULL;
+	FILE* f = fopen(numef, "r");
+	if (f)
+	{
+		while (!feof(f))
+			//folosim inserare la sfarsit ca sa le am in ordine
+			adaugareCaietFinal(&cap, citireCaietFisier(f));
+		fclose(f);
+	}
+	return cap;
+}
+
+
 int main()
 {
 	struct Caiet c1;
@@ -99,6 +156,19 @@ int main()
 	int numar = 0;
 	c=citireVectorFisier(&numar, f);
 	afisareVector(c, numar);
+
+	//listele nu ocupa o zona de mem contigua
+	//din acest motiv trb sa retinem acele adrese pentru a sti unde sa cautam elementele
+	//vom retine adresele in cate un nod care va contine informatia utila si adresa urmatorului element
+	//adresa aceea e de forma pointer la nodul urmator adica la locatia unde se gaseste stocata urmatoarea informatie
+	//ultimul nod va contine null in loc de adresa la urmatorul nod(nu exista urmatorul)
+	//trebuie sa stim care e primul nod(capul) adica de unde incepe lista pentru a o parcurge
+	//DECI ne trebuie o structura nod pentru a stoca toate informatiile
+
+	Nod* cap = citireListaFisier("caiete.txt");
+	afisareListaCaiete(cap);
+
+
 	dezalocareVector(&c, &numar);
 	return 0;
 }
