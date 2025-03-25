@@ -145,6 +145,19 @@ Nod* citireListaFisier(const char* numef)//vom returna nodul cap
 }
 
 
+void dezalocareLista(Nod** cap)
+{
+	while (*cap)
+	{
+		Nod* p=(*cap);
+		(*cap) = (*cap)->urmator;
+		if (p->info.disciplina != NULL)
+			dezalocareCaiet(&(p->info));
+		free(p);
+	}
+
+}
+
 int main()
 {
 	struct Caiet c1;
@@ -167,7 +180,7 @@ int main()
 
 	Nod* cap = citireListaFisier("caiete.txt");
 	afisareListaCaiete(cap);
-
+	dezalocareLista(&cap);
 
 	dezalocareVector(&c, &numar);
 	return 0;
