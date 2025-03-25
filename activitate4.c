@@ -157,6 +157,21 @@ void dezalocareLista(Nod** cap)
 	}
 
 }
+float calculeazaPaginiMedii(Nod* cap)
+{
+	int numar = 0;
+	float suma = 0;
+	while (cap)
+	{
+		numar++;
+		suma += (float)cap->info.numarPagini;
+		cap = cap->urmator;
+	}
+	if (numar > 0)
+		return suma / numar;
+	else
+		return 0;
+}
 
 int main()
 {
@@ -180,6 +195,9 @@ int main()
 
 	Nod* cap = citireListaFisier("caiete.txt");
 	afisareListaCaiete(cap);
+
+
+	printf("\n\n\nNumarul mediu de pagini este: %3.2f\n", calculeazaPaginiMedii(cap));
 	dezalocareLista(&cap);
 
 	dezalocareVector(&c, &numar);
