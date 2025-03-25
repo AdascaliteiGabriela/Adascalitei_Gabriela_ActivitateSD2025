@@ -80,6 +80,14 @@ void afisareVector(struct Caiet* c, int numar)
 	for (int i = 0; i < numar; i++)
 		afisareCaiet(c[i]);
 }
+void dezalocareVector(struct Caiet** c, int* numar)
+{
+	for (int i = 0; i < (*numar); i++)
+		dezalocareCaiet( & (*c)[i]);
+	free(*c);
+	(*c) = NULL;
+	(*numar) = 0;
+}
 int main()
 {
 	struct Caiet c1;
@@ -91,5 +99,6 @@ int main()
 	int numar = 0;
 	c=citireVectorFisier(&numar, f);
 	afisareVector(c, numar);
+	dezalocareVector(&c, &numar);
 	return 0;
 }
