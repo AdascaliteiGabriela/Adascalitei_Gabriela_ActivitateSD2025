@@ -3,3 +3,7 @@ Happy Sunshine,18,50,Spania
 Christmas Tea Royal,15.90,50,Germania
 Sarut Divin,24.90,100,Romania
 Merisor,22,80,Romania
+Ginger Tea,12.9,50,Germania
+Citrus Fruits,5.5,48,Germania
+Super Fruits,9.9,40,Germania
+Matcha,48.50,125,Japonia

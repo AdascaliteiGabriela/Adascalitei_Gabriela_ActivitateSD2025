@@ -36,20 +36,67 @@ Ceai citireCeaiDinFisier(FILE* f)
 	return c1;
 }
 
+void adaugaCeaiInVector(Ceai** ceaiuri, int* numarCeaiuri, Ceai ceaiNou)
+{
+	Ceai* copie = (Ceai*)malloc(((*numarCeaiuri) + 1) * sizeof(Ceai));//creez un vector nou si aloc spatiu pentru inca un ceai
+	for (int i = 0; i < (*numarCeaiuri); i++)
+	{
+		copie[i] = (*ceaiuri)[i];
+	}
+	copie[*numarCeaiuri] = ceaiNou;
+	free(*ceaiuri);
+	(*ceaiuri) = copie;	
+	(*numarCeaiuri)++;
+	
+	
+
+}
+Ceai* citireVectorFisier(int* numarCeaiuri,char*numeFisier)
+{
+	Ceai* ceaiuri=NULL;
+	FILE*f=fopen(numeFisier, "r");
+	(*numarCeaiuri) = 0;
+	while (!feof(f))
+	{
+		Ceai c1 = citireCeaiDinFisier(f);
+		adaugaCeaiInVector(&ceaiuri, &(*numarCeaiuri), c1);
+
+	}
+	return ceaiuri;
+}
+
 void afisareCeai(Ceai c1)
 {
 	printf("Nume ceai: %s\nPret: %3.2f\nCantitate: %i\nTara de provenienta: %s\n\n", c1.nume, c1.pret, c1.cantitate, c1.taraProvenienta);
 }
-
+void afisareVectorCeai(Ceai* c, int numar)
+{
+	for (int i = 0; i < numar; i++)
+		afisareCeai(c[i]);
+}
 int main()
 {
 	Ceai c1;
 	FILE* f = fopen("ceaiuri.txt", "r");
 
-	for (int i = 0; i < 5; i++) {
+	c1 = citireCeaiDinFisier(f);
+	afisareCeai(c1);
+	
+	int numar = 0;
+	Ceai* c=NULL;
+	for (int i = 0; i < 5; i++)
+	{
+		adaugaCeaiInVector(&c, &numar, c1);
 		c1 = citireCeaiDinFisier(f);
-		afisareCeai(c1);
 	}
+	for (int i = 0; i < numar; i++)
+		afisareCeai(c[i]);
+	printf("\n\nAm citit %d ceaiuri pana acum.\n\n\n", numar);
+	Ceai* cc = NULL;
+	numar = 0;
 
+	cc=citireVectorFisier(&numar, "ceaiuri.txt");
+	afisareVectorCeai(cc, numar);
+	printf("\n\nAm citit %d ceaiuri pana acum.\n\n\n", numar);
 	return 0;
 }
