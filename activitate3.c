@@ -74,6 +74,27 @@ void afisareVectorCeai(Ceai* c, int numar)
 	for (int i = 0; i < numar; i++)
 		afisareCeai(c[i]);
 }
+void dezalocareVectorCeai(Ceai** ceaiuri,int* numarCeaiuri)
+{
+	for (int i = 0; i < *numarCeaiuri; i++)
+	{
+		free((*ceaiuri)[i].nume);
+		free((*ceaiuri)[i].taraProvenienta);
+		free(*ceaiuri);
+		*ceaiuri = NULL;
+		*numarCeaiuri = 0;
+	}
+}
+void dezalocareCeai(Ceai* c)
+{
+	if ((c != NULL)) {
+		free(c->nume);
+		free(c->taraProvenienta);
+
+		c->nume = NULL;
+		c->taraProvenienta = NULL;
+	}
+}
 int main()
 {
 	Ceai c1;
@@ -89,14 +110,16 @@ int main()
 		adaugaCeaiInVector(&c, &numar, c1);
 		c1 = citireCeaiDinFisier(f);
 	}
+	dezalocareVectorCeai(&c, &numar);
 	for (int i = 0; i < numar; i++)
 		afisareCeai(c[i]);
 	printf("\n\nAm citit %d ceaiuri pana acum.\n\n\n", numar);
 	Ceai* cc = NULL;
 	numar = 0;
-
+	dezalocareCeai(&c1);
 	cc=citireVectorFisier(&numar, "ceaiuri.txt");
 	afisareVectorCeai(cc, numar);
 	printf("\n\nAm citit %d ceaiuri pana acum.\n\n\n", numar);
+	dezalocareVectorCeai(&cc, &numar);
 	return 0;
 }
