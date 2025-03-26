@@ -183,6 +183,40 @@ int numarPaginiAnumitTip(Nod* cap, char c)
 	}
 	return numar;
 }
+void stergeAnumitCaiet(Nod** cap, const char* disciplina)
+{
+	Nod* p = (*cap);
+	
+		while ((*cap) && strcmp((*cap)->info.disciplina, disciplina) == 0)
+		{
+			p = (*cap);
+			(*cap) = p->urmator;
+			free(p->info.disciplina);
+			free(p);
+		}
+		p = (*cap);
+		while (p)
+		{
+			
+			while ( p->urmator && strcmp(p->urmator->info.disciplina, disciplina) != 0)
+			{
+				p = p->urmator;
+			}
+			if (p->urmator)
+			{
+				Nod* aux = p->urmator;
+				p->urmator = aux->urmator;
+				if (aux->info.disciplina != NULL)
+					free(aux->info.disciplina);
+				free(aux);
+			}
+			else
+			{
+				p = NULL;
+			}
+		}
+	
+}
 int main()
 {
 	struct Caiet c1;
@@ -209,7 +243,10 @@ int main()
 
 	printf("\n\n\nNumarul mediu de pagini este: %3.2f\n", calculeazaPaginiMedii(cap));
 
-	printf("\n\nNumarul de pagini de matematica este: %d", numarPaginiAnumitTip(cap, 'M'));
+	printf("\n\nNumarul de pagini de matematica este: %d\n\n\n\n", numarPaginiAnumitTip(cap, 'M'));
+	stergeAnumitCaiet(&cap, "Finante");
+	afisareListaCaiete(cap);
+	
 	dezalocareLista(&cap);
 
 	dezalocareVector(&c, &numar);
