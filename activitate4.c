@@ -244,6 +244,7 @@ int main()
 	printf("\n\n\nNumarul mediu de pagini este: %3.2f\n", calculeazaPaginiMedii(cap));
 
 	printf("\n\nNumarul de pagini de matematica este: %d\n\n\n\n", numarPaginiAnumitTip(cap, 'M'));
+	printf("Vom sterge caietele de Finante, am terminat materia semestrul trecut.\n\n");
 	stergeAnumitCaiet(&cap, "Finante");
 	afisareListaCaiete(cap);
 	
