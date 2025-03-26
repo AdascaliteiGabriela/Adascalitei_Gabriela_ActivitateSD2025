@@ -172,7 +172,17 @@ float calculeazaPaginiMedii(Nod* cap)
 	else
 		return 0;
 }
-
+int numarPaginiAnumitTip(Nod* cap, char c)
+{
+	int numar = 0;
+	while (cap)
+	{
+		if (cap->info.tip == c)
+			numar += cap->info.numarPagini;
+		cap = cap->urmator;
+	}
+	return numar;
+}
 int main()
 {
 	struct Caiet c1;
@@ -198,6 +208,8 @@ int main()
 
 
 	printf("\n\n\nNumarul mediu de pagini este: %3.2f\n", calculeazaPaginiMedii(cap));
+
+	printf("\n\nNumarul de pagini de matematica este: %d", numarPaginiAnumitTip(cap, 'M'));
 	dezalocareLista(&cap);
 
 	dezalocareVector(&c, &numar);
