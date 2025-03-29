@@ -16,8 +16,20 @@ struct Nod
 	struct Nod* urm;
 	Tablou info;
 };
-
 typedef struct Nod Nod;
+typedef struct  NodDublu NodDublu;//pt liste dublu inlantuite
+struct NodDublu
+{
+	NodDublu* urm;
+	NodDublu* pre;
+	Tablou info;
+
+};
+struct Lista {
+	NodDublu* prim;
+	NodDublu* ultim;
+};
+typedef struct Lista Lista;
 Tablou citireTablouFisier(FILE* f)
 {
 	Tablou c;
@@ -84,17 +96,66 @@ void afisareLista(Nod* cap)
 		i++;
 	}
 }
+
+
+//FUNCTII LISTA DUBLU INLANTUITA
+void adaugaFinalListaD(Lista* list, Tablou t)
+{
+	//creem noul nod pe care il adaugam si nu uitam sa INITIALIZAM
+	NodDublu* nou;
+	nou = (NodDublu*)malloc(sizeof(NodDublu));
+	nou->pre = NULL;
+	nou->urm = NULL;
+	nou->info = t;
+	if (list->ultim)
+	{
+		nou->pre = list->ultim;//fac legatura de la nodul nou la ultimul din lista
+		list->ultim->urm = nou;//fac legatura de la ultimul din lista la cel nou
+		
+	}
+	else
+	{
+		list->prim = nou;
+	}
+	list->ultim = nou;
+
+}
+void citireListaD(FILE* f, Lista* list)
+{
+	while (!feof(f))
+	{
+		adaugaFinalListaD(list, citireTablouFisier(f));
+	}
+}
+void afisareListaD(Lista list)
+{
+	NodDublu* aux = list.prim;
+	while (aux)
+	{
+		afisareTablou(aux->info);
+		aux = aux->urm;
+	}
+
+}
 int main()
 {
 	Tablou t;
 	FILE* f = fopen("tablouri.txt", "r");
 	
 	t = citireTablouFisier(f);
-	afisareTablou(t);
+	//afisareTablou(t);
 	fclose(f);
 	 f = fopen("tablouri.txt", "r");
 	Nod* cap =  citireListaFisier(f);
-	afisareLista(cap);
-
+	fclose(f);
+	//afisareLista(cap);
+	f = fopen("tablouri.txt", "r");
+	Lista list;
+	list.prim = NULL;
+	list.ultim = NULL;
+	citireListaD(f, &list);
+	afisareListaD(list);
+	
+	fclose(f);
 	return 0;
 }
