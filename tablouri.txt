@@ -1,0 +1,8 @@
+123,15000.50,Floarea Soarelui,Vincent van Gogh
+1014,23450.99,Persistenta Memoriei,Salvador Dali
+12,100000,Sarutul,Gustav Klimt
+3,7500,Tipatul,Edvard Munch
+23,345098.60,Car cu boi,Nicolar Grigorescu
+24,123489.25,Moara, Sava Hentia
+25,2500.99,Vaza cu flori de mac, Vincent Van Gogh
+26,983456,Parcul Monceau,Claude Monet
