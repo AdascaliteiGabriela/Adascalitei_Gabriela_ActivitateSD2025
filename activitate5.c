@@ -137,6 +137,22 @@ void afisareListaD(Lista list)
 	}
 
 }
+void dezalocareListaD(Lista* list)
+{
+	NodDublu* aux = list->prim;
+	while (aux->urm)
+	{
+		free(aux->info.autor);
+		free(aux->info.titlu);
+		aux = aux->urm;
+		free(aux->pre);
+	}
+	free(aux->info.autor);
+	free(aux->info.titlu);
+	free(aux);
+	list->prim = NULL;
+	list->ultim = NULL;
+}
 int main()
 {
 	Tablou t;
@@ -155,7 +171,7 @@ int main()
 	list.ultim = NULL;
 	citireListaD(f, &list);
 	afisareListaD(list);
-	
+	dezalocareListaD(&list);
 	fclose(f);
 	return 0;
 }
