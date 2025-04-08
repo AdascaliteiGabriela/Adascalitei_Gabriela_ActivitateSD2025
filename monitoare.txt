@@ -1,0 +1,5 @@
+1,Sony,44.2,3
+4,Myria,22.5,6
+2,Samsung,53,2
+67,Lenovo,32,4
+12,Huawei,43.22,3
