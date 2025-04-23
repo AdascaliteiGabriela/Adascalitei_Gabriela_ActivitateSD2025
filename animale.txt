@@ -1,0 +1,4 @@
+1,pisica,4,12.5
+3,caine,6,20
+4,papagal,8,0.25
+12,testoasa,12,2

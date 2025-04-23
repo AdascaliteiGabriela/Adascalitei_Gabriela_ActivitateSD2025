@@ -1,0 +1,8 @@
+1,Nunta,200,1234665.4
+3,Botez,100,2343.99
+12,Absolvire,900,123435
+4,Petrecere,30,1234
+9,ZI Nastere,24,800.5
+5,Craciun,12,969.8
+8,Paste,12,1200.3
+6,Inmormantare,16,2000

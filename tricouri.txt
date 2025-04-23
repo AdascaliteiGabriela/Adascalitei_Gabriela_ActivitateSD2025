@@ -1,0 +1,4 @@
+Prada,bumbac,38,2000
+Review,poliester,36,90
+Shein,poliester,42,50
+Cropp,denim,36,140
