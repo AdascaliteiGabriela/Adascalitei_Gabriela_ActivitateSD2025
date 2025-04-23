@@ -74,16 +74,16 @@ void filtreazaHeap(Heap heap, int pozitieNod) {
 		int stg = 2 * pozitieNod + 1;
 		int drp = 2 * pozitieNod + 2;
 		int pozMaxim = pozitieNod;
-		if (heap.masini[pozMaxim].id < heap.masini[stg].id)
-			pozMaxim = stg;
-		if (heap.masini[pozMaxim].id < heap.masini[drp].id)
+		if (stg<heap.nrMasini&&heap.masini[pozMaxim].id < heap.masini[stg].id)//trb si conditii de verificat sa nu mergem in partea ascunsa(daca stg sau drp e intre nrMasini si lungime atunci e pe o poz ascunsa, nu e bine asa
+			pozMaxim = stg;//e esential sa pun stg<heap.nrMasini
+		if (drp<heap.nrMasini&&heap.masini[pozMaxim].id < heap.masini[drp].id)
 			pozMaxim = drp;
 		if (pozMaxim != pozitieNod)
 		{
 			Masina aux;
 			aux= heap.masini[pozitieNod];
 			heap.masini[pozitieNod] = heap.masini[pozMaxim];
-			heap.masini[pozMaxim] = heap.masini[pozitieNod];
+			heap.masini[pozMaxim] = aux;
 			if (pozMaxim < (heap.nrMasini - 1) / 2)
 				filtreazaHeap(heap, pozMaxim);
 		}
@@ -93,11 +93,11 @@ void filtreazaHeap(Heap heap, int pozitieNod) {
 Heap citireHeapDeMasiniDinFisier(const char* numeFisier) {
 	Heap heap = initializareHeap(10);
 	FILE* f = fopen(numeFisier, "r");
-	int index = 0;
+	
 	while (!feof(f))
 	{
-		heap.masini[index] = citireMasinaDinFisier(f);
-		index++;
+		heap.masini[heap.nrMasini] = citireMasinaDinFisier(f);
+		heap.nrMasini++;
 
 	}//intai citim tot si apoi filtram
 	fclose(f);
@@ -106,28 +106,58 @@ Heap citireHeapDeMasiniDinFisier(const char* numeFisier) {
 	{
 		filtreazaHeap(heap, i);
 	}
+	return heap;
 }
 
 void afisareHeap(Heap heap) {
-	//afiseaza elementele vizibile din heap
+	for (int i = 0; i < heap.nrMasini; i++)
+		afisareMasina(heap.masini[i]);
 }
 
 void afiseazaHeapAscuns(Heap heap) {
 	//afiseaza elementele ascunse din heap
+	for (int i = heap.nrMasini; i < heap.lungime; i++)
+		afisareMasina(heap.masini[i]);
 }
 
-Masina extrageMasina(void* heap) {
+Masina extrageMasina(Heap* heap) {
 	//extrage si returneaza masina de pe prima pozitie
 	//elementul extras nu il stergem...doar il ascundem
+	Masina aux=heap->masini[0];
+	heap->masini[0] = heap->masini[heap->nrMasini - 1];
+	heap->masini[heap->nrMasini - 1] = aux;
+	heap->nrMasini--;
+	for (int i = (heap->nrMasini - 1) / 2; i >= 0; i--)
+	{
+		filtreazaHeap(*heap, i);
+	}
+	return aux;
 }
 
 
 void dezalocareHeap(Heap* heap) {
-	//sterge toate elementele din Heap
+	for (int i = 0; i < heap->lungime; i++)
+	{
+		free(heap->masini[i].numeSofer);
+		free(heap->masini[i].model);
+	}
+	free (heap->masini);
+	heap->lungime = 0;
+	heap->nrMasini = 0;
+	heap->masini = NULL;
+
+
 }
 
 int main() {
 
+	Heap heap=citireHeapDeMasiniDinFisier("masini_arbore.txt");
+	afisareHeap(heap);
+	for(int i=0;i<10;i++)
+		extrageMasina(&heap);
 
+	printf("\n\n\nAfisare elemente ascunse: \n\n");
+	afiseazaHeapAscuns(heap); printf("\n\n\n\n\n");
+	afisareHeap(heap);
 	return 0;
 }
