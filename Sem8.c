@@ -3,8 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-//trebuie sa folositi fisierul masini.txt
-//sau va creati un alt fisier cu alte date
+
+//e de 2 tipuri -maxheap si minheap
+//arbore binar - max 2 descendenti
+//arbore binar complet -  fiecare parinte are fix 2 copii(mai putin frunzele )
+//pt max fiecare parinte trb sa aiba val mai mare decat copiii
 
 struct StructuraMasina {
 	int id;
@@ -19,7 +22,9 @@ typedef struct StructuraMasina Masina;
 //creare structura pentru Heap
 //un vector de elemente, lungimea vectorului si numarul de elemente din vector
 struct Heap {
-	int lungime;
+	int lungime;//arata nr de masini vizibile
+	Masina* masini;
+	int nrMasini;//arata totalul de masini
 };
 typedef struct Heap Heap;
 
@@ -55,19 +60,52 @@ void afisareMasina(Masina masina) {
 }
 
 Heap initializareHeap(int lungime) {
-	//initializeaza heap-ul cu 0 elemente 
-	//dar cu o lungime primita ca parametru
+	Heap heap;
+	heap.lungime = lungime;
+	heap.masini = (Masina*)malloc(sizeof(Masina) * lungime);
+	heap.nrMasini = 0;
+	return heap;
 }
 
 void filtreazaHeap(Heap heap, int pozitieNod) {
-	//filtreaza heap-ul pentru nodul a carei pozitie o primeste ca parametru
+	//primim nodul, stabilim cu formula 2*n+1, 2*n+2 care sunt copiii, selectam maximul si interschimbam daca e cazul
+	if (pozitieNod >= 0 && pozitieNod < heap.nrMasini)
+	{
+		int stg = 2 * pozitieNod + 1;
+		int drp = 2 * pozitieNod + 2;
+		int pozMaxim = pozitieNod;
+		if (heap.masini[pozMaxim].id < heap.masini[stg].id)
+			pozMaxim = stg;
+		if (heap.masini[pozMaxim].id < heap.masini[drp].id)
+			pozMaxim = drp;
+		if (pozMaxim != pozitieNod)
+		{
+			Masina aux;
+			aux= heap.masini[pozitieNod];
+			heap.masini[pozitieNod] = heap.masini[pozMaxim];
+			heap.masini[pozMaxim] = heap.masini[pozitieNod];
+			if (pozMaxim < (heap.nrMasini - 1) / 2)
+				filtreazaHeap(heap, pozMaxim);
+		}
+	}
 }
 
 Heap citireHeapDeMasiniDinFisier(const char* numeFisier) {
-	//citim toate masinile din fisier si le stocam intr-un heap 
-	// pe care trebuie sa il filtram astfel incat sa respecte 
-	// principiul de MAX-HEAP sau MIN-HEAP dupa un anumit criteriu
-	// sunt citite toate elementele si abia apoi este filtrat vectorul
+	Heap heap = initializareHeap(10);
+	FILE* f = fopen(numeFisier, "r");
+	int index = 0;
+	while (!feof(f))
+	{
+		heap.masini[index] = citireMasinaDinFisier(f);
+		index++;
+
+	}//intai citim tot si apoi filtram
+	fclose(f);
+	//ca sa filtram pornim de jos in sus ca sa putem parcurge peste tot (deci de la ultimul parinte)
+	for (int i = (heap.nrMasini - 1) / 2; i >= 0; i--)
+	{
+		filtreazaHeap(heap, i);
+	}
 }
 
 void afisareHeap(Heap heap) {
