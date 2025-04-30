@@ -17,7 +17,12 @@ struct StructuraMasina {
 typedef struct StructuraMasina Masina;
 
 //creare structura pentru un nod dintr-un arbore binar de cautare
-
+typedef struct Nod Nod;
+struct Nod {
+	Nod* stg;
+	Nod* drp;
+	struct StructuraMasina info;
+};
 Masina citireMasinaDinFisier(FILE* file) {
 	char buffer[100];
 	char sep[3] = ",\n";
@@ -50,31 +55,104 @@ void afisareMasina(Masina masina) {
 }
 
 
-void adaugaMasinaInArbore(/*arborele de masini*/ Masina masinaNoua) {
-	//adauga o noua masina pe care o primim ca parametru in arbore,
-	//astfel incat sa respecte princiippile de arbore binar de cautare
-	//dupa o anumita cheie pe care o decideti - poate fi ID
+void adaugaMasinaInArbore(struct Nod**cap, Masina masinaNoua) {
+	if ((*cap) != NULL)
+	{
+		if (masinaNoua.id < (*cap)->info.id)
+			adaugaMasinaInArbore(&((*cap)->stg), masinaNoua);
+		else if(masinaNoua.id> (*cap)->info.id)
+			adaugaMasinaInArbore(&((*cap)->drp), masinaNoua);
+		else
+		{
+			(*cap)->info.nrUsi = masinaNoua.nrUsi;
+			(*cap)->info.pret = masinaNoua.pret;
+			(*cap)->info.serie = masinaNoua.serie;
+			(*cap)->info.id = masinaNoua.id;
+			free((*cap)->info.numeSofer);
+			(*cap)->info.numeSofer = (char*)malloc(strlen(masinaNoua.numeSofer) + 1);
+			strcpy_s((*cap)->info.numeSofer, strlen(masinaNoua.numeSofer) + 1, masinaNoua.numeSofer);
+			free((*cap)->info.model);
+			(*cap)->info.model = (char*)malloc(strlen(masinaNoua.model) + 1);
+			strcpy_s((*cap)->info.model, strlen(masinaNoua.model) + 1, masinaNoua.model);
+
+
+		}
+		
+	}
+	else
+	{
+		(*cap) = (Nod*)malloc(sizeof(Nod));
+		(*cap)->stg = NULL;
+		(*cap)->drp = NULL;
+		(*cap)->info.nrUsi = masinaNoua.nrUsi;
+		(*cap)->info.pret = masinaNoua.pret;
+		(*cap)->info.serie = masinaNoua.serie;
+		(*cap)->info.id = masinaNoua.id;
+		(*cap)->info.numeSofer = (char*)malloc(strlen(masinaNoua.numeSofer) + 1);
+		strcpy_s((*cap)->info.numeSofer, strlen(masinaNoua.numeSofer) + 1, masinaNoua.numeSofer);
+		(*cap)->info.model = (char*)malloc(strlen(masinaNoua.model) + 1);
+		strcpy_s((*cap)->info.model, strlen(masinaNoua.model) + 1, masinaNoua.model);
+
+	}
+
 }
 
-void* citireArboreDeMasiniDinFisier(const char* numeFisier) {
-	//functia primeste numele fisierului, il deschide si citeste toate masinile din fisier
-	//prin apelul repetat al functiei citireMasinaDinFisier()
-	//ATENTIE - la final inchidem fisierul/stream-ul
+Nod* citireArboreDeMasiniDinFisier(const char* numeFisier) {
+	FILE* f = fopen(numeFisier, "r");
+	Nod* cap = NULL;
+	while (!feof(f)) {
+		Masina m = citireMasinaDinFisier(f);
+		adaugaMasinaInArbore(&cap, m);
+		free(m.model);
+		free(m.numeSofer);
+
+	}
+
+	fclose(f);
+	return cap;
 }
 
-void afisareMasiniDinArbore(/*arbore de masini*/) {
-	//afiseaza toate elemente de tip masina din arborele creat
-	//prin apelarea functiei afisareMasina()
-	//parcurgerea arborelui poate fi realizata in TREI moduri
-	//folositi toate cele TREI moduri de parcurgere
+void afisareArborePreOrdine(Nod* cap)
+{
+	if (cap)
+	{
+		afisareMasina(cap->info);
+		afisareArborePreOrdine(cap->stg);
+		afisareArborePreOrdine(cap->drp);
+	}
 }
 
-void dezalocareArboreDeMasini(/*arbore de masini*/) {
-	//sunt dezalocate toate masinile si arborele de elemente
+
+void dezalocareArboreDeMasini(Nod**cap) {
+	if ((*cap) != NULL)
+	{
+		dezalocareArboreDeMasini(&((*cap)->stg));
+		dezalocareArboreDeMasini(&((*cap)->drp));
+		free((*cap)->info.model);
+		free((*cap)->info.numeSofer);
+		free(*cap);
+	}
+
+
+	
 }
 
-Masina getMasinaByID(/*arborele de masini*/int id) {
+Masina getMasinaByID(Nod*radacina,int id) {
 	Masina m;
+	m.id = -1;
+	if (id > radacina->info.id)
+		return getMasinaByID(radacina->drp, id);
+	else if (id < radacina->info.id)
+			return getMasinaByID(radacina->stg, id);
+	
+	else {
+		m = radacina->info;
+		m.numeSofer = (char*)malloc(strlen(radacina->info.numeSofer) + 1);
+		strcpy_s(m.numeSofer, strlen(radacina->info.numeSofer) + 1, radacina->info.numeSofer);
+		m.model = (char*)malloc(strlen(radacina->info.model) + 1);
+		strcpy_s(m.model, strlen(radacina->info.numeSofer) + 1, radacina->info.numeSofer);
+	}
+
 
 	return m;
 }
@@ -102,6 +180,11 @@ float calculeazaPretulMasinilorUnuiSofer(/*arbore de masini*/ const char* numeSo
 
 int main() {
 
-
+	Nod* arbore=NULL;
+	arbore = citireArboreDeMasiniDinFisier("masini_arbore.txt");
+	afisareArborePreOrdine(arbore);
+	//dezalocareArboreDeMasini(&arbore);
+	Masina m = getMasinaByID(arbore, 2);
+	afisareMasina(m);
 	return 0;
 }
