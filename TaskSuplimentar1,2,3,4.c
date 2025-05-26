@@ -147,6 +147,95 @@ void AfisareVector(Agentia* vector, int dimensiune)
 	for (int i = 0; i < dimensiune; i++)
 		afisareAgentie(vector[i]);
 }
+
+
+//FISIERE
+
+//functie de citire obiect din fisier
+Agentia citireAgentieFisier(FILE* f)
+{
+	Agentia a;
+	char buffer[100];
+	char sep[3] = ",\n";
+	fgets(buffer, 100, f);
+	char* aux;
+	aux = strtok(buffer, sep);
+	if (aux)
+	{
+		a.numeAgentie = (char*)malloc(strlen(aux) + 1);
+		strcpy_s(a.numeAgentie, strlen(aux) + 1, aux);
+
+	}
+	else
+		a.numeAgentie = NULL;
+	aux = strtok(NULL, sep);
+	if(aux)
+		a.numarAngajati = atoi(aux);
+	aux = strtok(NULL, sep);
+	if (aux)
+		a.anInfiintare = atoi(aux);
+	aux = strtok(NULL, sep);
+	if (aux)
+		a.valoareIncasari = atof(aux);
+	
+	return a;
+}
+
+//functie citire numarElemente
+int numarElemente(const char* numef)
+{
+	FILE* f = fopen(numef, "r");
+	if (!f) return 0;
+
+	int nrAgentii = 0;
+	char buffer[100];
+	while (fgets(buffer, 100, f))
+		nrAgentii++;
+
+	fclose(f);
+	return nrAgentii;
+}
+
+//functie de citire vector
+Agentia* citireVectorFisier(const char* numef, int * dim)
+{
+	(*dim) = numarElemente(numef);
+	if (*dim == 0) return NULL;
+	Agentia* agentii = (Agentia*)malloc(sizeof(Agentia) * (*dim));
+	FILE* f = fopen(numef, "r");
+	for(int i=0;i<(*dim);i++)
+	{
+		agentii[i] = citireAgentieFisier(f);
+
+	}
+	fclose(f);
+	return agentii;
+}
+//salvare obiect fisier
+void salvareAgentieInFisier(FILE* f, Agentia a)
+{
+	if (f && a.numeAgentie != NULL)
+	{
+		fprintf(f, "%s,%d,%d,%.2f\n",a.numeAgentie,a.numarAngajati,a.anInfiintare,a.valoareIncasari);
+	}
+}
+//salvare vector fisier
+void salvareVectorInFisier(const char* numefisier, Agentia* vector, int dim)
+{
+	FILE* f = fopen(numefisier, "w");
+	if (!f)
+	{
+		printf("Nu s-a pupt deschide fisierul :( \n");
+		return;
+	}
+
+	for (int i = 0; i < dim; i++)
+	{
+		salvareAgentieInFisier(f, vector[i]);
+	}
+
+	fclose(f);
+}
 int main()
 {
 	Agentia a1;
@@ -172,10 +261,18 @@ int main()
 
 	//apel functie de mutare:
 	int lungimeProfitMinim = 0;
-	Agentia* agentiiProfitMinim = mutare(&agentii, &lungime, &lungimeProfitMinim, 0);
-	printf("\n\nAgentiile cu profit minim 0\n\n");
+	Agentia* agentiiProfitMinim = mutare(&agentii, &lungime, &lungimeProfitMinim, 4050);
+	printf("\n\nAgentiile cu profit minim 4050\n\n");
 	AfisareVector(agentiiProfitMinim,lungimeProfitMinim);
-	printf("\n\nAgentiile cu profit sub 0\n\n");
+	printf("\n\nAgentiile cu profit sub 4050\n\n");
 	AfisareVector(agentii,lungime);
+	printf("\n\n\n\n\nCitire din fisier: \n\n");
+	int dimFisier = 0;
+	Agentia* agentiiFisier = citireVectorFisier("agentii.txt", &dimFisier);
+	for (int i = 0; i < dimFisier; i++)
+		afisareAgentie(agentiiFisier[i]);
+
+	printf("\n\n\nAm salvat vectorul in fisierul agentii2.txt\n\n\n");
+	salvareVectorInFisier("agentii2.txt",agentiiFisier, dimFisier);
 	return 0;
 }
