@@ -1,0 +1,10 @@
+Marco,5,16,10
+Maria,2,15,10
+Gigel,1,13,8.5
+Liviu,8,15,7.45
+Toni,3,11,5
+Elena,4,17,8.67
+Costel,10,15,6.23
+Sanda,6,14,9.20
+Flavius,9,12,8.88
+Dana,7,14,10
