@@ -110,8 +110,19 @@ void afisareArbore(Nod* cap)
 		afisareArbore(cap->drp);
 	}
 }
+void elibereazaArbore(Nod* cap)
+{
+	if (cap) {
+		elibereazaArbore(cap->stg);
+		elibereazaArbore(cap->drp);
+		free(cap->info.nume);
+		free(cap);
+	}
+}
 int main()
 {
 	Nod* arbore = citireArbore("chiriasi.txt");
 	afisareArbore(arbore);
+	elibereazaArbore(arbore);
+	arbore = NULL;
 }
