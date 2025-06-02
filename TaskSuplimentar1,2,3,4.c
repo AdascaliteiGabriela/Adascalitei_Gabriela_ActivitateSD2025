@@ -236,6 +236,57 @@ void salvareVectorInFisier(const char* numefisier, Agentia* vector, int dim)
 
 	fclose(f);
 }
+//sortare vector
+Agentia* sortareCrescatorAngajati(Agentia* v, int n) {
+	for (int i = 0; i < n - 1; i++) {
+		for (int j = i + 1; j < n; j++) {
+			if (v[i].numarAngajati > v[j].numarAngajati) {
+				Agentia aux = v[i];
+				v[i] = v[j];
+				v[j] = aux;
+			}
+		}
+	}
+	return v;
+}
+
+//construire matrice
+Agentia** matrice(Agentia* vector, int nrElemente, int* nrLinii, int* nrColoane)
+{
+	//voi grupa pe 2 linii in functie de nr angajati
+	(*nrLinii) = 2;
+	(*nrColoane) = nrElemente / (*nrLinii);
+	Agentia** matrice = (Agentia**)malloc((*nrLinii) * sizeof(Agentia*));//am alocat un vector de pointeri la linii
+	for (int i = 0; i < *nrLinii; i++) {
+		matrice[i] = (Agentia*)malloc((*nrColoane) * sizeof(Agentia));
+	}
+	for (int i = 0; i < (*nrColoane); i++)
+	{
+		//matrice[0][i] = vector[i];
+		matrice[0][i].numarAngajati = vector[i].numarAngajati;
+		matrice[0][i].valoareIncasari = vector[i].valoareIncasari;
+		matrice[0][i].anInfiintare = vector[i].anInfiintare;
+		matrice[0][i].numeAgentie = (char*)malloc(strlen(vector[i].numeAgentie)+1);
+		strcpy_s(matrice[0][i].numeAgentie, strlen(vector[i].numeAgentie)+1, vector[i].numeAgentie);
+	}
+	for (int i = 0; i < (*nrColoane); i++)
+	{
+		//matrice[1][i] = vector[i+(*nrColoane)];
+		matrice[1][i].numarAngajati = vector[i + (*nrColoane)].numarAngajati;
+		matrice[1][i].valoareIncasari = vector[i + (*nrColoane)].valoareIncasari;
+		matrice[1][i].anInfiintare = vector[i + (*nrColoane)].anInfiintare;
+		matrice[1][i].numeAgentie = (char*)malloc(strlen(vector[i + (*nrColoane)].numeAgentie) + 1);
+		strcpy_s(matrice[1][i].numeAgentie, strlen(vector[i + (*nrColoane)].numeAgentie) + 1, vector[i + (*nrColoane)].numeAgentie);
+	}
+	return matrice;
+}
+void afisareMatrice(Agentia** matrice, int nrLinii, int nrCol)
+{
+	for (int i = 0; i < nrLinii; i++)
+		for (int j = 0; j < nrCol; j++)
+			afisareAgentie(matrice[i][j]);
+}
+
 int main()
 {
 	Agentia a1;
@@ -274,5 +325,10 @@ int main()
 
 	printf("\n\n\nAm salvat vectorul in fisierul agentii2.txt\n\n\n");
 	salvareVectorInFisier("agentii2.txt",agentiiFisier, dimFisier);
+	agentii = sortareCrescatorAngajati(agentii, lungime);
+	int linii = 0;
+	int coloane = 0;
+	Agentia** matr = matrice(agentii, lungime, &linii, &coloane);
+	afisareMatrice(matr, linii, coloane);
 	return 0;
 }
